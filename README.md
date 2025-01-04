@@ -1,6 +1,5 @@
 # people-daily-crawler
 
-### English Version
 
 This project is funded by the "Soochow University Undergraduate Innovation and Entrepreneurship Training Program", project number: 202210285006Z.
 
