@@ -22,7 +22,7 @@ def get_date_list(beginDate, endDate):
 
     return data
 
-def header():      # 随机选择header防止被禁
+def header():      # Randomly select header to prevent being banned
     headers_list = [
         'Mozilla/5.0(Macintosh;U;IntelMacOSX10_6_8;en-us)AppleWebKit/534.50(KHTML,likeGecko)Version/5.1Safari/534.50',
         'Opera/9.80(WindowsNT6.1;U;en)Presto/2.8.131Version/11.11',
@@ -38,12 +38,10 @@ def header():      # 随机选择header防止被禁
     headers = {"User-Agent": header1}
     return  headers
 
-# 保存文章内容
+# Save article content
 def saveFile(content, path, filename):
-    # 如果没有该文件夹，则自动生成
     if not os.path.exists(path):
         os.makedirs(path)
-    # 保存文件
     with open(path + filename, 'w', encoding='utf-8') as f:
         f.write(content)
 
@@ -72,26 +70,26 @@ def gethtml(link1):
 
 
 if __name__ == '__main__':
-    # 输入起止日期，爬取之间的新闻
-    beginDate = input('请输入开始日期:')
-    endDate = input('请输入结束日期:')
-    destdir = input("请输入数据保存的地址：")
+    # Enter the start and end dates to crawl news between them
+    beginDate = input('Please input start date:')
+    endDate = input('Please input end date:')
+    destdir = input("Please input where you want to save result：")
     data = get_date_list(beginDate, endDate)
 
     for d in data:
         year = str(d.year)
         month = str(d.month) if d.month >= 10 else '0' + str(d.month)
         day = str(d.day) if d.day >= 10 else '0' + str(d.day)
-        destdir = destdir                                                     # 爬下来的文件的存储地方
+        destdir = destdir
 
         dataurl = 'https://www.laoziliao.net/rmrb/' + year + '-' + month + '-' + day
-        for link1 in fetchUrl(dataurl):           #每一个版面的链接
+        for link1 in fetchUrl(dataurl):
             content = gethtml(link1)
-            path = destdir + '/' + year + '年' + '/' + year + '年' + month + '月' + '/' + year + month + day + '/'
+            path = destdir + '/' + year + 'year' + '/' + year + 'year' + month + 'month' + '/' + year + month + day + '/'
             n = link1.split('-')[3].split('#')[0]
             filename = year + month + day + '-' + n + '.txt'
             saveFile(content, path, filename)
 #            time.sleep(2)
-        print('爬取完成' + year + month + day)
+        print('Finish' + year + month + day)
         time.sleep(3)    
-    print('全部爬取完成')
+    print('All finished')

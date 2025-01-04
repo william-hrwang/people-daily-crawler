@@ -4,7 +4,7 @@ import os
 import datetime
 import time
 
-# 返回网页内容
+# Return the content of the url
 def fetchUrl(url):
     headers = {
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
@@ -16,7 +16,7 @@ def fetchUrl(url):
     r.encoding = r.apparent_encoding
     return r.text
 
-# 获得当天报纸的各版面的链接列表
+# Get the list of pages
 def getPageList(year, month, day):
     url = 'http://paper.people.com.cn/rmrb/html/' + year + '-' + month + '/' + day + '/nbs.D110000renmrb_01.htm'
     html = fetchUrl(url)
@@ -36,7 +36,7 @@ def getPageList(year, month, day):
     return linkList
 
 
-# 获取报纸某一版面的文章链接列表
+# Get a list of article links for a certain section of a newspaper
 def getTitleList(year, month, day, pageUrl):
     html = fetchUrl(pageUrl)
     bsobj = bs4.BeautifulSoup(html,'html.parser')
@@ -58,32 +58,27 @@ def getTitleList(year, month, day, pageUrl):
     return linkList
 
 
-# 获取新闻的文章内容
+# get the content of the article
 def getContent(html):
     bsobj = bs4.BeautifulSoup(html,'html.parser')
 
-    # 获取文章 标题
     title = bsobj.h3.text + '\n' + bsobj.h1.text + '\n' + bsobj.h2.text + '\n'
     #print(title)
 
-    # 获取文章 内容
     pList = bsobj.find('div', attrs = {'id': 'ozoom'}).find_all('p')
     content = ''
     for p in pList:
         content += p.text + '\n'
-    #print(content)
 
-    # 返回结果 标题+内容
     resp = title + content
     return resp
 
-# 保存文件
+
 def saveFile(content, path, filename):
-    # 如果没有该文件夹，则自动生成
+
     if not os.path.exists(path):
         os.makedirs(path)
 
-    # 保存文件
     with open(path + filename, 'w', encoding='utf-8') as f:
         f.write(content)
 
@@ -94,18 +89,15 @@ def download_rmrb(year, month, day, destdir):
         titleList = getTitleList(year, month, day, page)
         for url in titleList:
 
-            # 获取新闻文章内容
             html = fetchUrl(url)
             content = getContent(html)
 
-            # 生成保存的文件路径及文件名
             temp = url.split('_')[2].split('.')[0].split('-')
             pageNo = temp[1]
             titleNo = temp[0] if int(temp[0]) >= 10 else '0' + temp[0]
             path = destdir + '/' + year + month + day + '/'
             fileName = year + month + day + '-' + pageNo + '-' + titleNo + '.txt'
 
-            # 保存文件
             saveFile(content, path, fileName)
 
 
@@ -127,9 +119,8 @@ def get_date_list(beginDate, endDate):
 
 
 if __name__ == '__main__':
-    # 输入起止日期，爬取之间的新闻
-    beginDate = input('请输入开始日期:')
-    endDate = input('请输入结束日期:')
+    beginDate = input('Please input start date:')
+    endDate = input('Please input end date:')
     data = get_date_list(beginDate, endDate)
 
     for d in data:
@@ -139,5 +130,4 @@ if __name__ == '__main__':
         destdir = "E:/202001"
 
         download_rmrb(year, month, day, destdir)
-        print("爬取完成：" + year + month + day)
-#         time.Sleep(3)      
+        print("Finish" + year + month + day)   
